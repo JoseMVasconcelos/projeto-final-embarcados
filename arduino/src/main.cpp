@@ -3,7 +3,8 @@
 #include "Arduino.h"
 #include "DHT.h"
 #include "LED.h"
-
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 
 // Pin Definitions
 #define DHT_PIN_DATA	5
@@ -22,6 +23,10 @@ LED ledR(LEDR_PIN_VIN);
 
 // define vars for testing menu
 const int timeout = 10000;       //define timeout of 10 sec
+const char* ssid = "Tartarus";
+const char* password = "nc23nb56";
+const char* settingsPath = "192.168.31.92:8000/settings";
+const char* loggerPath = "192.168.31.92:8000/logs";
 char menuOption = 0;
 long time0;
 char menu();
@@ -34,52 +39,35 @@ void setup()
     Serial.begin(9600);
     while (!Serial) ; // wait for serial port to connect. Needed for native USB
     Serial.println("start");
-    
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("Wifi connected");
     dht.begin();
-    menuOption = menu();
     
 }
 
 // Main logic of your circuit. It defines the interaction between the components you selected. After setup, it runs over and over again, in an eternal loop.
 void loop() 
 {
-    
-    
-    if(menuOption == '1') {
-    // DHT22/11 Humidity and Temperature Sensor - Test Code
-    // Reading humidity in %
-    float dhtHumidity = dht.readHumidity();
-    // Read temperature in Celsius, for Fahrenheit use .readTempF()
-    float dhtTempC = dht.readTemperature();
-    Serial.print(F("Humidity: ")); Serial.print(dhtHumidity); Serial.print(F(" [%]\t"));
-    Serial.print(F("Temp: ")); Serial.print(dhtTempC); Serial.println(F(" [C]"));
+    if (WiFi.status() == WL_CONNECTED) {
+        WiFiClient client;
+        HTTPClient http;
+        
+        http.begin(client, loggerPath);
 
+        http.addHeader("Content-Type", "application/json");
+        int httpRespondeCode = http.POST("{\"tempC\":\"20\"}");
+
+        Serial.print("HTTP Responde: ");
+        Serial.println(httpRespondeCode);
+
+        http.end();
     }
-    else if(menuOption == '2') {
-    // LED - Basic Blue 5mm - Test Code
-    // The LED will turn on and fade till it is off
-    for(int i=255 ; i> 0 ; i -= 5)
-    {
-        ledB.dim(i);                      // 1. Dim Led 
-        delay(15);                               // 2. waits 5 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    }                                          
-    ledB.off();                        // 3. turns off
-    }
-    else if(menuOption == '3') {
-    // LED - Basic Red 5mm - Test Code
-    // The LED will turn on and fade till it is off
-    for(int i=255 ; i> 0 ; i -= 5)
-    {
-    ledR.dim(i);                      // 1. Dim Led 
-    delay(15);                               // 2. waits 5 milliseconds (0.5 sec). Change the value in the brackets (500) for a longer or shorter delay in milliseconds.
-    }                                          
-    ledR.off();                        // 3. turns off
-    }
-    
-    if (millis() - time0 > timeout)
-    {
-        menuOption = menu();
-    }
+
+    delay(2000);
     
 }
 
