@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
-const Chart = ({ data }) => {
+const ChartComponent = ({ data }) => {
   const upperLimitLine = Array(data.x.length).fill(data['limite-superior']);
   const lowerLimitLine = Array(data.x.length).fill(data['limite-inferior']);
 
@@ -14,20 +14,20 @@ const Chart = ({ data }) => {
           datasets: [
             {
               data: data.y,
-              color: () => `rgba(255, 165, 38, 5)`, // Cor da linha principal
-              withDots: true
+              color: () => `rgba(255, 165, 38, 1)`, // Cor da linha principal
+              withDots: true, // Mantém os pontos para esta série
             },
             {
               data: upperLimitLine,
               strokeWidth: 2,
               color: () => `rgba(255, 0, 0, 5)`, // Cor da linha superior
-              withDots: false
+              withDots: false, // Remove os pontos para esta série
             },
             {
               data: lowerLimitLine,
               strokeWidth: 2,
               color: () => `rgba(0, 255, 0, 5)`, // Cor da linha inferior
-              withDots: false
+              withDots: false, // Remove os pontos para esta série
             },
           ],
         }}
@@ -53,6 +53,12 @@ const Chart = ({ data }) => {
           borderRadius: 16,
         }}
       />
+      <View style={styles.legendContainer}>
+        <Text style={styles.legend}>Legendas: </Text>
+        <Text style={[styles.legend, { color: 'rgba(255, 0, 0, 1)' }]}>Limite Superior </Text>
+        <Text style={[styles.legend, { color: 'rgba(255, 165, 38, 1)' }]}>Principal </Text>
+        <Text style={[styles.legend, { color: 'rgba(0, 255, 0, 1)' }]}>Limite Inferior</Text>
+      </View>
     </View>
   );
 };
@@ -63,6 +69,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 20,
   },
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  legend: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
 });
 
-export default Chart;
+export default ChartComponent;

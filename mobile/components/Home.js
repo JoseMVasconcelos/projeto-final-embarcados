@@ -17,9 +17,14 @@ export default class HomeScreen extends React.Component {
         	</View>
         	<View style={styles.buttonContainer}>
                 <Chart data={data} />
+                <View style={styles.updateButton}>
+                    <TouchableOpacity onPress={this.handlePress}>
+                        <Text style={styles.buttonText}>Atualizar Gráfico</Text>
+                    </TouchableOpacity>
+				</View>
 				<View style={styles.button}>
                     <TouchableOpacity onPress={this.handlePress}>
-                        <Text style={styles.buttonText}>Temperatura</Text>
+                        <Text style={styles.buttonText}>Configurar Limites</Text>
                     </TouchableOpacity>
 				</View>
         	</View>
@@ -33,7 +38,7 @@ const styles = StyleSheet.create({
 		marginTop: 30,
 		alignItems: 'center',
     	justifyContent: 'center',
-    	padding: 60,
+    	padding: 30,
   	},
   	logoImage: {
     	height: 180,
@@ -49,10 +54,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    updateButton: {
+        backgroundColor: 'black',
+        minWidth: '50%',
+        marginTop: 40,
+        padding: 15,
+        borderRadius: 10,
+    },
     button: {
         backgroundColor: 'red',
         minWidth: '50%',
-        marginTop: 20,
+        marginTop: 40,
         padding: 15,
         borderRadius: 10,
     },
