@@ -2,7 +2,10 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
-const ChartComponent = ({ data }) => {
+const Chart = ({ data }) => {
+  const upperLimitLine = Array(data.x.length).fill(data['limite-superior']);
+  const lowerLimitLine = Array(data.x.length).fill(data['limite-inferior']);
+
   return (
     <View style={styles.container}>
       <LineChart
@@ -11,10 +14,24 @@ const ChartComponent = ({ data }) => {
           datasets: [
             {
               data: data.y,
+              color: () => `rgba(255, 165, 38, 5)`, // Cor da linha principal
+              withDots: true
+            },
+            {
+              data: upperLimitLine,
+              strokeWidth: 2,
+              color: () => `rgba(255, 0, 0, 5)`, // Cor da linha superior
+              withDots: false
+            },
+            {
+              data: lowerLimitLine,
+              strokeWidth: 2,
+              color: () => `rgba(0, 255, 0, 5)`, // Cor da linha inferior
+              withDots: false
             },
           ],
         }}
-        width={300}
+        width={380}
         height={200}
         yAxisLabel=""
         yAxisSuffix=""
@@ -28,11 +45,6 @@ const ChartComponent = ({ data }) => {
           labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           style: {
             borderRadius: 16,
-          },
-          propsForDots: {
-            r: '6',
-            strokeWidth: '2',
-            stroke: '#ffa726',
           },
         }}
         bezier
@@ -53,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChartComponent;
+export default Chart;
