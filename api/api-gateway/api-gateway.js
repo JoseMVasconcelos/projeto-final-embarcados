@@ -6,9 +6,9 @@ var logger = require('morgan');
 app.use(logger('dev'));
 
 function selectProxyHost(req) {
-    if (req.path.startsWith('/control'))
+    if (req.path.startsWith('/settings'))
         return 'http://localhost:8090';
-    else if (req.path.startsWith('/logging'))
+    else if (req.path.startsWith('/logs'))
         return 'http://localhost:8091/';
     else return null;
 }
