@@ -1,0 +1,6 @@
+{
+	"limite-superior": 30,
+	"limite-inferior": 25,
+	"x": ["-7 min", "-6 min", "-5 min", "-4 min", "-3 min", "-2 min", "-1 min", "0 min"],
+	"y": [26, 22, 23, 21, 19, 18, 25, 30]
+}
