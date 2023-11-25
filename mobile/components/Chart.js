@@ -34,7 +34,7 @@ const ChartComponent = ({ data }) => {
         width={380}
         height={200}
         yAxisLabel=""
-        yAxisSuffix=""
+        yAxisSuffix="º"
         yAxisInterval={1}
         chartConfig={{
           backgroundColor: '#fff',
@@ -54,9 +54,9 @@ const ChartComponent = ({ data }) => {
         }}
       />
       <View style={styles.legendContainer}>
-        <Text style={styles.legend}>Legendas: </Text>
-        <Text style={[styles.legend, { color: 'rgba(255, 0, 0, 1)' }]}>Limite Superior </Text>
-        <Text style={[styles.legend, { color: 'rgba(255, 165, 38, 1)' }]}>Principal </Text>
+        <Text style={styles.legend}>Legendas:  </Text>
+        <Text style={[styles.legend, { color: 'rgba(255, 0, 0, 1)' }]}>Limite Superior   </Text>
+        <Text style={[styles.legend, { color: 'rgba(255, 165, 38, 1)' }]}>Principal  </Text>
         <Text style={[styles.legend, { color: 'rgba(0, 255, 0, 1)' }]}>Limite Inferior</Text>
       </View>
     </View>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: -20,
   },
   legendContainer: {
     flexDirection: 'row',
