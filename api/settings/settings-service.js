@@ -54,13 +54,26 @@ app.get('/settings', (req, res, next) => {
     });
 });
 
+app.get('/settings/arduino', (req, res, next) => {
+    db.all(`SELECT * FROM settings`, (err, result) => {
+        if (err) {
+            console.log("Erro: "+ err);
+            return res.status(500).send("Error retrieving data.")
+        } else {
+            stringResult = result[0].upperThreshold.padStart(3, "0") + result[0].bottomThreshold.padStart(3, "0");
+            return res.status(200).send(stringResult);
+        }
+    });
+});
+
 app.patch('/settings', (req, res, next) => {
     const {upperThreshold, bottomThreshold} = req.body;
-    if (upperThreshold <= bottomThreshold) {
+    if (upperThreshold <= bottomThreshold || bottomThreshold < 0 || upperThreshold > 50) {
         return res.status(400).send("Invalid thresholds!")
     }
     db.run(`UPDATE settings SET upperThreshold = ?, bottomThreshold = ?`, [upperThreshold, bottomThreshold], err => {
         if (err) {
+            console.log(req.body);
             console.log("Error: "+err);
             return res.status(500).send("Error updating settings");
         } else {
