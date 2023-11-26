@@ -3,17 +3,17 @@ import { View, StyleSheet, Text } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
 const ChartComponent = ({ data }) => {
-  const upperLimitLine = Array(data.x.length).fill(data["upperThreshold"]);
-  const lowerLimitLine = Array(data.x.length).fill(data["bottomThreshold"]);
+  const upperLimitLine = Array(data.time.length).fill(data["upperThreshold"]);
+  const lowerLimitLine = Array(data.time.length).fill(data["bottomThreshold"]);
 
   return (
     <View style={styles.container}>
       <LineChart
         data={{
-          labels: data.x,
+          labels: data.time,
           datasets: [
             {
-              data: data.y,
+              data: data.temp,
               color: () => `rgba(255, 165, 38, 1)`, // Cor da linha principal
               withDots: true, // Mantém os pontos para esta série
             },

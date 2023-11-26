@@ -29,15 +29,12 @@ export default class HomeScreen extends React.Component {
     try {
       const dataLogs = await this.getChartData();
       const dataSettings = await this.getSettingsData();
-    //   console.log(dataSettings[0])
-    //   console.log(dataLogs)
-      const combinedData = Object.assign({}, dataSettings, dataLogs)
-      console.log(combinedData)
-      // Atualiza o estado com os dados do gráfico
+      const combinedData = Object.assign({}, dataSettings[0], dataLogs)
+
       this.setState({
         upperThreshold: dataSettings[0]["upperThreshold"].toString(),
         bottomThreshold: dataSettings[0]["bottomThreshold"].toString(),
-        chartData: combinedData,
+        chartData: combinedData
       });
     } catch (error) {
       console.error("Erro ao obter dados do gráfico:", error);
@@ -57,11 +54,13 @@ export default class HomeScreen extends React.Component {
   }
 
   async updateChartLimits() {
-    const { upperThreshold, bottomThreshold } = this.state;
+    let { upperThreshold, bottomThreshold } = this.state;
+    upperThreshold = parseInt(upperThreshold, 10);
+    bottomThreshold = parseInt(bottomThreshold, 10);
 
     try {
       const response = await fetch("http://192.168.31.92:8000/settings", {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
