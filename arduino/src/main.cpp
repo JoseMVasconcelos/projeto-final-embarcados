@@ -6,6 +6,7 @@
 #include <ESP8266HTTPClient.h>
 #include <iostream>
 #include <string>
+#include <ArduinoJson.h>
 
 DHT dht(DHT_PIN_DATA, DHT11);
 LED ledB(LEDB_PIN_VIN);
@@ -17,7 +18,7 @@ float upperThreshold;
 float bottomThreshold;
 bool settingsFlag = false;
 bool loggerFlag = false;
-String getSettings();
+float lastTemp;
 
 void setup() 
 {
@@ -39,6 +40,7 @@ void loop()
     if (WiFi.status() == WL_CONNECTED) {
         WiFiClient client;
         HTTPClient http;
+
         //GET SETTINGS
         if (millis() - lastTimeSettings >= SETTINGS_DELAY) {
             http.begin(client, SETTINGS_PATH);
@@ -46,9 +48,13 @@ void loop()
             if (httpCode > 0) {
                 String responsePayload = http.getString();
                 Serial.println(responsePayload);
+                upperThreshold = responsePayload.substring(0, 3).toFloat();
+                bottomThreshold = responsePayload.substring(3, 6).toFloat();
             } else {
                 Serial.println("Error: " + httpCode);
             }
+            Serial.print(upperThreshold);
+            Serial.print(bottomThreshold);
             http.end();
             lastTimeSettings = millis();
         }
@@ -57,8 +63,7 @@ void loop()
         if (millis() - lastTimeLogger >= LOGGER_DELAY) {
             http.begin(client, LOGGER_PATH);
             http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            float lastTempCheck = dht.readTemperature();
-            std::string logPost = "tempC=" + std::to_string(lastTempCheck);
+            std::string logPost = "tempC=" + std::to_string(lastTemp);
             String logPostString = String(logPost.c_str());
             int httpCode = http.POST(logPostString);
             if (httpCode > 0) {
@@ -78,5 +83,15 @@ void loop()
             Serial.print(".");
         }
     }
-
+    lastTemp = dht.readTemperature();
+    if (lastTemp > upperThreshold) {
+        ledR.dim(255);
+        ledB.off();
+    } else if (lastTemp < bottomThreshold) {
+        ledB.dim(255);
+        ledR.off();
+    } else {
+        ledR.off();
+        ledB.off();
+    }
 }
