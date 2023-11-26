@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import React from "react";
+import { View, StyleSheet, Text } from "react-native";
+import { LineChart } from "react-native-chart-kit";
 
 const ChartComponent = ({ data }) => {
-  const upperLimitLine = Array(data.x.length).fill(data['limite-superior']);
-  const lowerLimitLine = Array(data.x.length).fill(data['limite-inferior']);
+  const upperLimitLine = Array(data.x.length).fill(data["upperThreshold"]);
+  const lowerLimitLine = Array(data.x.length).fill(data["bottomThreshold"]);
 
   return (
     <View style={styles.container}>
@@ -37,9 +37,9 @@ const ChartComponent = ({ data }) => {
         yAxisSuffix="º"
         yAxisInterval={1}
         chartConfig={{
-          backgroundColor: '#fff',
-          backgroundGradientFrom: '#fff',
-          backgroundGradientTo: '#fff',
+          backgroundColor: "#fff",
+          backgroundGradientFrom: "#fff",
+          backgroundGradientTo: "#fff",
           decimalPlaces: 0,
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
@@ -54,10 +54,16 @@ const ChartComponent = ({ data }) => {
         }}
       />
       <View style={styles.legendContainer}>
-        <Text style={styles.legend}>Legendas:  </Text>
-        <Text style={[styles.legend, { color: 'rgba(255, 0, 0, 1)' }]}>Limite Superior   </Text>
-        <Text style={[styles.legend, { color: 'rgba(255, 165, 38, 1)' }]}>Principal  </Text>
-        <Text style={[styles.legend, { color: 'rgba(0, 255, 0, 1)' }]}>Limite Inferior</Text>
+        <Text style={styles.legend}>Legendas: </Text>
+        <Text style={[styles.legend, { color: "rgba(255, 0, 0, 1)" }]}>
+          Limite Superior{" "}
+        </Text>
+        <Text style={[styles.legend, { color: "rgba(255, 165, 38, 1)" }]}>
+          Principal{" "}
+        </Text>
+        <Text style={[styles.legend, { color: "rgba(0, 255, 0, 1)" }]}>
+          Limite Inferior
+        </Text>
       </View>
     </View>
   );
@@ -65,17 +71,17 @@ const ChartComponent = ({ data }) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: -20,
   },
   legendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginTop: 10,
   },
   legend: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
 });

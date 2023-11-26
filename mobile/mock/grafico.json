@@ -1,6 +1,15 @@
 {
-	"limite-superior": 25,
-	"limite-inferior": 20,
-	"x": ["-7 min", "-6 min", "-5 min", "-4 min", "-3 min", "-2 min", "-1 min", "0 min"],
-	"y": [26, 22, 23, 21, 19, 18, 25, 30]
+  "upperThreshold": 25,
+  "bottomThreshold": 20,
+  "x": [
+    "-7 min",
+    "-6 min",
+    "-5 min",
+    "-4 min",
+    "-3 min",
+    "-2 min",
+    "-1 min",
+    "0 min"
+  ],
+  "y": [26, 22, 23, 21, 19, 18, 25, 30]
 }
