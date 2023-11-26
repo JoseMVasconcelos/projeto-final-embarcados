@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Chart from './Chart';
-import data from '../mock/grafico.json';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class HomeScreen extends React.Component {
@@ -11,14 +10,83 @@ export default class HomeScreen extends React.Component {
     };
 
     state = {
-        upperLimit: data['limite-superior'].toString(), // Converte para string para preencher o TextInput
-        lowerLimit: data['limite-inferior'].toString(),
+        limiteSuperior: '',
+        limiteInferior: '',
+        chartData: null,
     };
 
-    handlePress = () => {
+    async componentDidMount() {
+        await this.updateChartData();
+    }
+
+    async updateChartData() {
+        try {
+            const data = await this.getChartData();
+
+            // Atualiza o estado com os dados do gráfico
+            this.setState({
+                limiteSuperior: data['limite-superior'].toString(),
+                limiteInferior: data['limite-inferior'].toString(),
+                chartData: data,
+            });
+        } catch (error) {
+            console.error('Erro ao obter dados do gráfico:', error);
+        }
+    }
+
+    async getChartData() {
+        const response = await fetch('https://localhost/dados-do-grafico');
+        const data = await response.json();
+        return data;
+    }
+
+    async updateChartLimits() {
+        const { limiteSuperior, limiteInferior } = this.state;
+
+        try {
+            const response = await fetch('https://localhost/atualizar-limites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    limiteSuperior,
+                    limiteInferior,
+                }),
+            });
+
+            // Verifica se a requisição foi bem-sucedida
+            if (response.ok) {
+                console.log('Limites atualizados com sucesso!');
+            } else {
+                console.error('Falha ao atualizar limites:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao realizar requisição para atualizar limites:', error);
+        }
+    }
+
+    handlePressUpdateChart = async () => {
+        await this.updateChartData();
+    };
+
+    handlePressUpdateLimits = async () => {
+        await this.updateChartLimits();
+        await this.updateChartData();
     };
 
     render() {
+        const { chartData } = this.state;
+
+        if (!chartData) {
+            // Se os dados do gráfico não foram carregados ainda, pode exibir um indicador de carregamento ou mensagem
+            return (
+                <View style={styles.loadingContainer}>
+                    <Text>Houve um erro a carregar o gráfico, reinicie o aplicativo.</Text>
+                </View>
+            );
+        }
+
         return (
             <View>
                 <View style={styles.container}>
@@ -27,35 +95,35 @@ export default class HomeScreen extends React.Component {
                     </Text>
                     <TouchableOpacity
                         style={styles.refreshButton}
-                        onPress={this.handlePress}
+                        onPress={this.handlePressUpdateChart}
                     >
                         <Icon name="refresh" size={20} color="white" />
                     </TouchableOpacity>
                 </View>
-                <Chart data={data} />
+                <Chart data={chartData} />
                 <View style={styles.labelContainer}>
-                        <Text style={[styles.label, { color: 'rgba(255, 0, 0, 1)' }]}>Limite Superior</Text>
-                        <Text style={[styles.label, { color: 'rgba(0, 255, 0, 1)' }]}>Limite Inferior</Text>
+                    <Text style={[styles.label, { color: 'rgba(255, 0, 0, 1)' }]}>Limite Superior</Text>
+                    <Text style={[styles.label, { color: 'rgba(0, 255, 0, 1)' }]}>Limite Inferior</Text>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
                         placeholder="Limite Superior"
                         keyboardType="numeric"
-                        value={this.state.upperLimit}
-                        onChangeText={(text) => this.setState({ upperLimit: text })}
+                        value={this.state.limiteSuperior}
+                        onChangeText={(text) => this.setState({ limiteSuperior: text })}
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Limite Inferior"
                         keyboardType="numeric"
-                        value={this.state.lowerLimit}
-                        onChangeText={(text) => this.setState({ lowerLimit: text })}
+                        value={this.state.limiteInferior}
+                        onChangeText={(text) => this.setState({ limiteInferior: text })}
                     />
                 </View>
                 <View style={styles.buttonContainer}>
                     <View style={styles.button}>
-                        <TouchableOpacity onPress={this.handlePress}>
+                        <TouchableOpacity onPress={this.handlePressUpdateLimits}>
                             <Text style={styles.buttonText}>
                                 Atualizar Limites
                             </Text>
@@ -126,5 +194,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
